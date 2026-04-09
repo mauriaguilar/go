@@ -24,7 +24,7 @@ func main() {
 	// 1 Creamos un contexto base vacio llamado Background
 	ctxBase := context.Background()
 
-	// 2 Derivamos un nuevo contexto con un tiempo maximo de vide de 2 segundos
+	// 2 Derivamos un nuevo contexto con un tiempo maximo de vida de 2 segundos
 	// Esta funcion devuelve el nuevo contexto y una funcion cancel para liberar recursos
 	ctx, cancel := context.WithTimeout(ctxBase, 2*time.Second)
 

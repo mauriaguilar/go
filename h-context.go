@@ -10,10 +10,19 @@ import (
 func procesarDatos(ctx context.Context, canalResultado chan string) {
 	fmt.Println("Goroutine: Iniciando procesamiento pesado (estimado 4 segundos)....")
 
+	// Canal para recibir la señal del trabajo completado
+	canalTrabajo := make(chan string)
+
+	// Lanzar el trabajo real en una goroutine
+	go func() {
+		time.Sleep(4 * time.Second) // Simulamos el trabajo pesado
+		canalTrabajo <- "ok, terminé el trabajo"
+	}()
+
 	// Utilizamos un select para competir: termina el trabajo o se cancela?
 	select {
-	case <-time.After(4 * time.Second): // Simulamos que el trabajo toma 4 segundos
-		canalResultado <- "Goroutine: Trabajo finalizado exitosamente."
+	case resultado := <-canalTrabajo: // Esperar la señal del trabajo completado
+		canalResultado <- "Goroutine: Trabajo finalizado exitosamente. " + resultado
 	case <-ctx.Done(): // Este canal emite una señal si el contexto expira o se cancela
 		mensajeError := fmt.Sprintf("Goroutine: Trabajo abortado. Motivo: %v.", ctx.Err())
 		canalResultado <- mensajeError
